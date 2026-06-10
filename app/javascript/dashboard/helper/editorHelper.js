@@ -99,6 +99,16 @@ export function stripUnsupportedMarkdown(
 export const SIGNATURE_DELIMITER = '--';
 
 /**
+ * Build signature prefix for inline signatures
+ * @param {string} signature - The signature to build prefix from
+ * @returns {string} - The signature prefix
+ */
+function buildSignaturePrefix(signature) {
+  const cleaned = cleanSignature(signature).replace(/\n+$/, '').trim();
+  return `${cleaned}: `;
+}
+
+/**
  * Parse and Serialize the markdown text to remove any extra spaces or new lines
  */
 export function cleanSignature(signature) {
@@ -141,20 +151,24 @@ function appendDelimiter(signature) {
 }
 
 /**
- * Check if there's an unedited signature at the end of the body
+ * Check if there's an unedited signature at the beginning of the body
  * If there is, return the index of the signature, If there isn't, return -1
  *
  * @param {string} body - The body to search for the signature.
  * @param {string} signature - The signature to search for.
- * @returns {number} - The index of the last occurrence of the signature in the body, or -1 if not found.
+ * @returns {number} - The index of the signature in the body, or -1 if not found.
  */
 export function findSignatureInBody(body, signature) {
-  const trimmedBody = body.trimEnd();
-  const cleanedSignature = cleanSignature(signature);
+  const plainPrefix = `${extractTextFromMarkdown(cleanSignature(signature)).trim()}: `;
+  const trimmedBody = body.trimStart();
 
-  // check if body ends with signature
-  if (trimmedBody.endsWith(cleanedSignature)) {
-    return body.lastIndexOf(cleanedSignature);
+  if (trimmedBody.startsWith(plainPrefix)) {
+    return body.indexOf(plainPrefix);
+  }
+
+  const mdPrefix = buildSignaturePrefix(signature);
+  if (trimmedBody.startsWith(mdPrefix)) {
+    return body.indexOf(mdPrefix);
   }
 
   return -1;
@@ -178,31 +192,32 @@ export function getEffectiveChannelType(channelType, medium) {
 }
 
 /**
- * Appends the signature to the body, separated by the signature delimiter.
+ * Appends the signature to the body as an inline prefix at the beginning.
  * Automatically strips unsupported formatting based on channel capabilities.
  *
  * @param {string} body - The body to append the signature to.
  * @param {string} signature - The signature to append.
  * @param {string} channelType - Optional. The effective channel type to determine supported formatting.
  *                               For Twilio channels, pass the result of getEffectiveChannelType().
- * @returns {string} - The body with the signature appended.
+ * @returns {string} - The body with the signature appended as prefix.
  */
 export function appendSignature(body, signature, channelType) {
-  // Strip only unsupported formatting based on channel capabilities
   const preparedSignature = channelType
     ? stripUnsupportedMarkdown(signature, channelType)
     : signature;
-  const cleanedSignature = cleanSignature(preparedSignature);
-  // if signature is already present, return body
-  if (findSignatureInBody(body, cleanedSignature) > -1) {
+
+  if (findSignatureInBody(body, preparedSignature) > -1) {
     return body;
   }
 
-  return `${body.trimEnd()}\n\n${appendDelimiter(cleanedSignature)}`;
+  const prefix = buildSignaturePrefix(preparedSignature);
+  const trimmedBody = body.trimStart();
+
+  return `${prefix}${trimmedBody}`;
 }
 
 /**
- * Removes the signature from the body, along with the signature delimiter.
+ * Removes the signature prefix from the body.
  * Tries multiple signature variants: original, channel-stripped, and fully stripped.
  *
  * @param {string} body - The body to remove the signature from.
@@ -211,45 +226,19 @@ export function appendSignature(body, signature, channelType) {
  * @returns {string} - The body with the signature removed.
  */
 export function removeSignature(body, signature, channelType) {
-  // Build unique list of signature variants to try
-  const channelStripped = channelType
+  const preparedSignature = channelType
     ? cleanSignature(stripUnsupportedMarkdown(signature, channelType))
-    : null;
-  const signaturesToTry = [
-    cleanSignature(signature),
-    channelStripped,
-    cleanSignature(extractTextFromMarkdown(signature)),
-  ].filter((sig, i, arr) => sig && arr.indexOf(sig) === i); // Remove nulls and duplicates
+    : signature;
 
-  // Find the first matching signature
-  const signatureIndex = signaturesToTry.reduce(
-    (index, sig) => (index === -1 ? findSignatureInBody(body, sig) : index),
-    -1
-  );
+  const signatureIndex = findSignatureInBody(body, preparedSignature);
 
-  // no need to trim the ends here, because it will simply be removed in the next method
-  let newBody = body;
+  if (signatureIndex === -1) return body;
 
-  // if signature is present, remove it and trim it
-  // trimming will ensure any spaces or new lines before the signature are removed
-  // This means we will have the delimiter at the end
-  if (signatureIndex > -1) {
-    newBody = stripDelimiterHardbreaks(
-      newBody.substring(0, signatureIndex)
-    ).trimEnd();
-  }
+  const mdPrefix = buildSignaturePrefix(preparedSignature);
+  const plainPrefix = `${extractTextFromMarkdown(cleanSignature(preparedSignature)).trim()}: `;
 
-  // Remove delimiter if it's at the end
-  if (newBody.endsWith(SIGNATURE_DELIMITER)) {
-    // if the delimiter is at the end, remove it
-    newBody = newBody.slice(0, -SIGNATURE_DELIMITER.length);
-    // strip any trailing blank-line markers
-    if (signatureIndex > -1) {
-      newBody = stripTrailingBlankLine(newBody);
-    }
-  }
-
-  return newBody;
+  const prefix = body.trimStart().startsWith(mdPrefix) ? mdPrefix : plainPrefix;
+  return body.slice(signatureIndex + prefix.length);
 }
 
 /**
