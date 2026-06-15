@@ -3,6 +3,8 @@
     "LOADING": "Buscando conversas",
     "LOAD_MORE_CONVERSATIONS": "Carregar mais conversas",
     "EOF": "Todas as conversas carregadas 🎉",
+    "QUICK_SEARCH_PLACEHOLDER": "Buscar conversas...",
+    "NO_SEARCH_RESULTS": "Nenhuma conversa encontrada",
     "LIST": {
       "404": "Não há conversas ativas neste grupo."
     },

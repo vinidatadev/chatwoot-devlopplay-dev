@@ -9,6 +9,7 @@ import {
 
 import ChatListHeader from './ChatListHeader.vue';
 import ConversationList from './ConversationList.vue';
+import ConversationQuickSearch from './ConversationQuickSearch.vue';
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
 import ConversationFilter from 'next/filter/ConversationFilter.vue';
 import SaveCustomView from 'next/filter/SaveCustomView.vue';
@@ -76,6 +77,7 @@ const activeAssigneeTab = ref(wootConstants.ASSIGNEE_TYPE.ME);
 const activeStatus = ref(wootConstants.STATUS_TYPE.OPEN);
 const activeSortBy = ref(wootConstants.SORT_BY_TYPE.LAST_ACTIVITY_AT_DESC);
 const showAdvancedFilters = ref(false);
+const quickSearchQuery = ref('');
 // chatsOnView is to store the chats that are currently visible on the screen,
 // which mirrors the conversationList.
 const chatsOnView = ref([]);
@@ -340,9 +342,27 @@ const conversationList = computed(() => {
   return localConversationList;
 });
 
+const filteredConversationList = computed(() => {
+  if (!quickSearchQuery.value) {
+    return conversationList.value;
+  }
+
+  const query = quickSearchQuery.value.toLowerCase();
+  
+  return conversationList.value.filter(conversation => {
+    // Buscar no nome do contato
+    const contactName = conversation.meta?.sender?.name?.toLowerCase() || '';
+    
+    // Buscar no preview da última mensagem
+    const lastMessage = conversation.last_non_activity_message?.content?.toLowerCase() || '';
+    
+    return contactName.includes(query) || lastMessage.includes(query);
+  });
+});
+
 const showEndOfListMessage = computed(() => {
   return !!(
-    conversationList.value.length &&
+    filteredConversationList.value.length &&
     hasCurrentPageEndReached.value &&
     !chatListLoading.value
   );
@@ -350,8 +370,8 @@ const showEndOfListMessage = computed(() => {
 
 const allConversationsSelected = computed(() => {
   return (
-    conversationList.value.length === selectedConversations.value.length &&
-    conversationList.value.every(el =>
+    filteredConversationList.value.length === selectedConversations.value.length &&
+    filteredConversationList.value.every(el =>
       selectedConversations.value.includes(el.id)
     )
   );
@@ -784,6 +804,10 @@ function toggleSelectAll(check) {
   selectAllConversations(check, conversationList);
 }
 
+function handleQuickSearch(query) {
+  quickSearchQuery.value = query;
+}
+
 useEmitter('fetch_conversation_stats', () => {
   if (hasAppliedFiltersOrActiveFolders.value) return;
   store.dispatch('conversationStats/get', conversationFilters.value);
@@ -919,11 +943,15 @@ watch(conversationFilters, (newVal, oldVal) => {
       @chat-tab-change="updateAssigneeTab"
     />
 
+    <ConversationQuickSearch
+      @search="handleQuickSearch"
+    />
+
     <p
-      v-if="!chatListLoading && !conversationList.length"
+      v-if="!chatListLoading && !filteredConversationList.length"
       class="flex overflow-auto justify-center items-center p-4"
     >
-      {{ $t('CHAT_LIST.LIST.404') }}
+      {{ quickSearchQuery ? $t('CHAT_LIST.NO_SEARCH_RESULTS') : $t('CHAT_LIST.LIST.404') }}
     </p>
     <ConversationBulkActions
       :conversations="selectedConversations"
@@ -936,7 +964,7 @@ watch(conversationFilters, (newVal, oldVal) => {
       @select-all-conversations="toggleSelectAll"
     />
     <ConversationList
-      :conversation-list="conversationList"
+      :conversation-list="filteredConversationList"
       :is-loading="chatListLoading"
       :show-end-of-list-message="showEndOfListMessage"
       :label="label"
