@@ -7,6 +7,8 @@
     "COPY_SUCCESSFUL": "Copiado para área de transferência com sucesso",
     "COMPANY": "Empresa",
     "LOCATION": "Localização",
+    "CPF_CNPJ": "CPF/CNPJ",
+    "COD_CLIENTE": "Código Cliente",
     "BROWSER_LANGUAGE": "Idioma do navegador",
     "CONVERSATION_TITLE": "Detalhes da conversa",
     "VIEW_PROFILE": "Visualizar Perfil",
@@ -117,6 +119,16 @@
       "COMPANY_NAME": {
         "PLACEHOLDER": "Digite o nome da empresa",
         "LABEL": "Nome da empresa"
+      },
+      "CPF_CNPJ": {
+        "PLACEHOLDER": "Digite o CPF ou CNPJ",
+        "LABEL": "CPF/CNPJ",
+        "ERROR": "CPF/CNPJ inválido"
+      },
+      "COD_CLIENTE": {
+        "PLACEHOLDER": "Digite o código do cliente",
+        "LABEL": "Código Cliente",
+        "ERROR": "Código inválido"
       },
       "COUNTRY": {
         "PLACEHOLDER": "Digite o nome do país ",

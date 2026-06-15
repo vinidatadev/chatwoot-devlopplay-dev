@@ -260,6 +260,24 @@ export default {
             @update="value => onFieldUpdate('phone_number', value)"
           />
           <ContactInfoRow
+            :value="contact.cpf_cnpj"
+            icon="contact-card"
+            emoji="🪪"
+            :title="$t('CONTACT_PANEL.CPF_CNPJ')"
+            show-copy
+            editable
+            @update="value => onFieldUpdate('cpf_cnpj', value)"
+          />
+          <ContactInfoRow
+            :value="contact.cod_cliente"
+            icon="user-code"
+            emoji="🔖"
+            :title="$t('CONTACT_PANEL.COD_CLIENTE')"
+            show-copy
+            editable
+            @update="value => onFieldUpdate('cod_cliente', value)"
+          />
+          <ContactInfoRow
             v-if="contact.identifier"
             :value="contact.identifier"
             icon="contact-identify"

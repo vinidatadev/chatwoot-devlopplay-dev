@@ -53,6 +53,8 @@ export default {
         name: '',
       },
       city: '',
+      cpfCnpj: '',
+      codCliente: '',
       socialProfileUserNames: {
         facebook: '',
         twitter: '',
@@ -158,12 +160,16 @@ export default {
         email: emailAddress,
         phone_number: phoneNumber,
         name,
+        cpf_cnpj: cpfCnpj,
+        cod_cliente: codCliente,
       } = this.contact;
       const additionalAttributes = this.contact.additional_attributes || {};
 
       this.name = name || '';
       this.email = emailAddress || '';
       this.phoneNumber = phoneNumber || '';
+      this.cpfCnpj = cpfCnpj || '';
+      this.codCliente = codCliente || '';
       this.companyName = additionalAttributes.company_name || '';
       this.country = {
         id: additionalAttributes.country_code || '',
@@ -201,6 +207,8 @@ export default {
         name: this.name,
         email: this.email,
         phone_number: this.setPhoneNumber,
+        cpf_cnpj: this.cpfCnpj,
+        cod_cliente: this.codCliente,
         additional_attributes: {
           ...this.contact.additional_attributes,
           description: this.description,
@@ -374,6 +382,18 @@ export default {
       class="w-full"
       :label="$t('CONTACT_FORM.FORM.COMPANY_NAME.LABEL')"
       :placeholder="$t('CONTACT_FORM.FORM.COMPANY_NAME.PLACEHOLDER')"
+    />
+    <woot-input
+      v-model="cpfCnpj"
+      class="w-full"
+      :label="$t('CONTACT_FORM.FORM.CPF_CNPJ.LABEL')"
+      :placeholder="$t('CONTACT_FORM.FORM.CPF_CNPJ.PLACEHOLDER')"
+    />
+    <woot-input
+      v-model="codCliente"
+      class="w-full"
+      :label="$t('CONTACT_FORM.FORM.COD_CLIENTE.LABEL')"
+      :placeholder="$t('CONTACT_FORM.FORM.COD_CLIENTE.PLACEHOLDER')"
     />
     <div class="w-full mb-4">
       <label>

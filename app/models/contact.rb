@@ -54,6 +54,8 @@ class Contact < ApplicationRecord
   validates :phone_number,
             allow_blank: true, uniqueness: { scope: [:account_id] },
             format: { with: /\+[1-9]\d{1,14}\z/, message: I18n.t('errors.contacts.phone_number.invalid') }
+  validates :cpf_cnpj, allow_blank: true, length: { maximum: 18 }
+  validates :cod_cliente, allow_blank: true, length: { maximum: 50 }
 
   belongs_to :account
   has_many :conversations, dependent: :destroy_async
@@ -158,6 +160,8 @@ class Contact < ApplicationRecord
       phone_number: phone_number,
       thumbnail: avatar_url,
       blocked: blocked,
+      cpf_cnpj: cpf_cnpj,
+      cod_cliente: cod_cliente,
       type: 'contact'
     }
   end
@@ -174,7 +178,9 @@ class Contact < ApplicationRecord
       name: name,
       phone_number: phone_number,
       thumbnail: avatar_url,
-      blocked: blocked
+      blocked: blocked,
+      cpf_cnpj: cpf_cnpj,
+      cod_cliente: cod_cliente
     }
   end
 
