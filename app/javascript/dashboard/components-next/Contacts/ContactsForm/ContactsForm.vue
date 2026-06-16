@@ -38,6 +38,8 @@ const FORM_CONFIG = {
   COUNTRY: { field: 'additionalAttributes.countryCode' },
   BIO: { field: 'additionalAttributes.description' },
   COMPANY_NAME: { field: 'additionalAttributes.companyName' },
+  CPF_CNPJ: { field: 'cpfCnpj' },
+  COD_CLIENTE: { field: 'codCliente' },
 };
 
 const SOCIAL_CONFIG = {
@@ -57,6 +59,8 @@ const defaultState = {
   firstName: '',
   lastName: '',
   phoneNumber: '',
+  cpfCnpj: '',
+  codCliente: '',
   additionalAttributes: {
     description: '',
     companyName: '',
@@ -96,6 +100,9 @@ const prepareStateBasedOnProps = () => {
     name = '',
     email: emailAddress,
     phoneNumber,
+    phone_number: phoneNumberSnake,
+    cpf_cnpj: cpfCnpj = '',
+    cod_cliente: codCliente = '',
     additionalAttributes = {},
   } = props.contactData || {};
   const { firstName, lastName } = splitName(name || '');
@@ -118,7 +125,9 @@ const prepareStateBasedOnProps = () => {
     firstName,
     lastName,
     email: emailAddress,
-    phoneNumber,
+    phoneNumber: phoneNumber || phoneNumberSnake,
+    cpfCnpj,
+    codCliente,
     additionalAttributes: {
       description,
       companyName,

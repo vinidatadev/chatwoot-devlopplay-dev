@@ -455,6 +455,12 @@
           },
           "COMPANY_NAME": {
             "PLACEHOLDER": "Digite o nome da empresa"
+          },
+          "CPF_CNPJ": {
+            "PLACEHOLDER": "Digite o CPF ou CNPJ"
+          },
+          "COD_CLIENTE": {
+            "PLACEHOLDER": "Digite o código do cliente"
           }
         },
         "UPDATE_BUTTON": "Atualizar contato",

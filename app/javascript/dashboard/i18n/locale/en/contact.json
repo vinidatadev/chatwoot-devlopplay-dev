@@ -444,6 +444,12 @@
           },
           "COMPANY_NAME": {
             "PLACEHOLDER": "Enter the company name"
+          },
+          "CPF_CNPJ": {
+            "PLACEHOLDER": "Enter CPF or CNPJ"
+          },
+          "COD_CLIENTE": {
+            "PLACEHOLDER": "Enter customer code"
           }
         },
         "UPDATE_BUTTON": "Update contact",
