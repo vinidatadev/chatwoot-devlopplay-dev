@@ -283,6 +283,30 @@ defineExpose({
             :show-border="isDetailsView"
           />
           <Input
+            v-else-if="item.key === 'CPF_CNPJ'"
+            v-model="state.cpfCnpj"
+            :placeholder="item.placeholder"
+            :custom-input-class="`h-8 !pt-1 !pb-1 ${
+              !isDetailsView
+                ? '[&:not(.error,.focus)]:!outline-transparent'
+                : ''
+            }`"
+            class="w-full"
+            @input="emit('update', { ...state })"
+          />
+          <Input
+            v-else-if="item.key === 'COD_CLIENTE'"
+            v-model="state.codCliente"
+            :placeholder="item.placeholder"
+            :custom-input-class="`h-8 !pt-1 !pb-1 ${
+              !isDetailsView
+                ? '[&:not(.error,.focus)]:!outline-transparent'
+                : ''
+            }`"
+            class="w-full"
+            @input="emit('update', { ...state })"
+          />
+          <Input
             v-else
             v-model="getFormBinding(item.key).value"
             :placeholder="item.placeholder"
