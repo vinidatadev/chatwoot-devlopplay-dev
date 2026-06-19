@@ -41,11 +41,6 @@ defineExpose({ clearSearch, searchQuery });
 <template>
   <div class="conversation-quick-search">
     <div class="search-wrap">
-      <fluent-icon 
-        icon="search" 
-        class="search-icon"
-        size="16"
-      />
       <input
         v-model="searchQuery"
         type="text"
@@ -77,19 +72,13 @@ defineExpose({ clearSearch, searchQuery });
   background: var(--n-surface-1);
   border: 1px solid var(--n-slate-6);
   border-radius: var(--border-radius-normal);
-  padding: var(--space-small);
+  padding: var(--space-small) var(--space-medium);
   transition: all 0.2s ease;
 
   &:focus-within {
     border-color: var(--n-brand);
     box-shadow: 0 0 0 3px rgba(84, 86, 255, 0.1);
   }
-}
-
-.search-icon {
-  color: var(--n-slate-11);
-  margin-right: var(--space-small);
-  flex-shrink: 0;
 }
 
 .search-input {
