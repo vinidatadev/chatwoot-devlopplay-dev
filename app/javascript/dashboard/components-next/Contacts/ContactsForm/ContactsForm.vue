@@ -101,8 +101,8 @@ const prepareStateBasedOnProps = () => {
     email: emailAddress,
     phoneNumber,
     phone_number: phoneNumberSnake,
-    cpf_cnpj: cpfCnpj = '',
-    cod_cliente: codCliente = '',
+    cpfCnpj = '',
+    codCliente = '',
     additionalAttributes = {},
   } = props.contactData || {};
   const { firstName, lastName } = splitName(name || '');
